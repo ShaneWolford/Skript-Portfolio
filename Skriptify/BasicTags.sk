@@ -1,0 +1,49 @@
+options:
+    prefix: &6&lBasicTags
+    perm: BasicTags.admin
+    permMsg: {@prefix} &cYou don't have permission to do this command.
+
+
+
+function tagsMenu(p: player):
+    set {_uid} to {_p}'s uuid
+    create a gui with virtual chest inventory with 6 rows named "Tags UI":
+        make gui slot (integers between 1 and 100) with gray stained glass pane named " "
+        loop {tags::*}:
+            make gui slot {_slot} with name tag named "%loop-value%" with lore "", "&fDisplay: &8[%loop-value%&8]", "", "&8Click to activate.":
+                set {tags::%{_uid}%} to {Name::%loop-value%}
+                message "{@prefix} You have chosen %loop-value% tag." to {_p}
+            add 1 to {_slot}
+            if {_slot} = 17:
+                set {_slot} to 19
+            else if {_slot} = 26:
+                set {_slot} to 28
+            else if {_slot} = 35:
+                set {_slot} to 37
+            else if {_slot} = 45:
+                stop
+    open last gui to {_p}
+
+command tag <string> <string>:
+    permission: {@perm}
+    permission message: {@permMsg}
+    trigger:
+        if arg-1 contains "create":
+            if arg-2 is set:
+                if {tags} = 43:
+                    message "{@prefix} Look's like you took up the first front page. Try buying the premium version of this skript coming out soon."
+                    stop
+                else:
+                    add arg-2 to {tags::*}
+                    set {tagsCreated} to arg-2
+                    add 1 to {tags}
+                    message "{@prefix} You have created the tag %{tagsCreated}%." to player
+            else:
+                message "{@prefix} Look's like you need to have the tag name like: &8(&f/tag create placeholder&8)" to player
+        else if arg-1 contains "help":
+            message "{@prefix} The commands are (/tag create placeholder), (/tag list), (/tags menu)"
+        else if arg-1 contains "menu":
+            tagsMenu(player) 
+        else if arg-1 contains "list":
+            loop {tags::*}:
+                message "{@prefix} %{tags::*}%"
